@@ -1,23 +1,46 @@
-import logo from './logo.svg';
+import React,{ useState, useEffect} from 'react';
 import './App.css';
+import FormularioTareas from './componentes/FormularioTareas';
+import Header from './componentes/Header';
+import ListaTareas from './componentes/ListaTareas';
 
-function App() {
+const App = () => {
+
+  const tareasGuardadas = 
+  localStorage.getItem('tareas') ?
+  JSON.parse(localStorage.getItem('tareas')) : [];
+
+  const [tareas, setTareas]=useState(tareasGuardadas); 
+  
+  useEffect(() => {
+    localStorage.setItem('tareas',JSON.stringify(tareas));
+  }, [tareas]);
+
+  let configMostrarCompletadas = '';
+  if (localStorage.getItem('mostrarTareas') === null){
+    configMostrarCompletadas = true;
+  } else {
+    configMostrarCompletadas = localStorage.getItem('mostrarTareas') === 'true';
+  }
+  
+  const [mostrarTareas, setmostrarTareas] = useState(configMostrarCompletadas);  
+  
+  useEffect(() => {
+    localStorage.setItem('mostrarTareas', mostrarTareas.toString());
+  }, [mostrarTareas]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="contenedor">
+      <Header 
+        mostrarTareas={mostrarTareas}
+        setmostrarTareas={setmostrarTareas}
+      />
+      <FormularioTareas tareas={tareas} setTareas={setTareas} />
+      <ListaTareas 
+      tareas={tareas} 
+      setTareas={setTareas}
+      mostrarTareas={mostrarTareas}
+      />
     </div>
   );
 }
